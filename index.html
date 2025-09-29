@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Modern Calculator</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      margin: 0;
+    }
+    .calc {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      width: 300px;
+    }
+    .display {
+      height: 60px;
+      background: #0f172a;
+      color: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 24px;
+      text-align: right;
+      margin-bottom: 15px;
+      overflow-x: auto;
+    }
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    button {
+      padding: 16px;
+      border-radius: 12px;
+      border: none;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .num {
+      background: #334155;
+      color: #e2e8f0;
+    }
+    .num:hover {
+      background: #475569;
+    }
+    .op {
+      background: #f97316;
+      color: white;
+    }
+    .op:hover {
+      background: #ea580c;
+    }
+    .wide {
+      grid-column: span 2;
+    }
+    #equals {
+      background: #10b981;
+      color: white;
+    }
+    #equals:hover {
+      background: #059669;
+    }
+  </style>
+</head>
+<body>
+  <div class="calc">
+    <div id="display" class="display">0</div>
+    <div class="keys">
+      <button id="clear" class="op">C</button>
+      <button id="neg" class="op">±</button>
+      <button id="percent" class="op">%</button>
+      <button data-op="/" class="op">÷</button>
+
+      <button class="num">7</button>
+      <button class="num">8</button>
+      <button class="num">9</button>
+      <button data-op="*" class="op">×</button>
+
+      <button class="num">4</button>
+      <button class="num">5</button>
+      <button class="num">6</button>
+      <button data-op="-" class="op">−</button>
+
+      <button class="num">1</button>
+      <button class="num">2</button>
+      <button class="num">3</button>
+      <button data-op="+" class="op">+</button>
+
+      <button class="num wide">0</button>
+      <button class="num">.</button>
+      <button id="equals" class="op">=</button>
+    </div>
+  </div>
+
+<script>
+const display = document.getElementById('display');
+let current = '';
+
+function updateDisplay(v){ display.textContent = v || '0'; }
+
+document.querySelectorAll('button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const t = b.textContent.trim();
+    if(b.id === 'clear'){ current = ''; updateDisplay(0); return; }
+    if(b.id === 'neg'){ if(current) current = String(parseFloat(current) * -1); updateDisplay(current); return; }
+    if(b.id === 'percent'){ if(current) current = String(parseFloat(current) / 100); updateDisplay(current); return; }
+    if(b.id === 'equals'){ 
+      try{ 
+        const safe = current.replace(/×/g,'*').replace(/÷/g,'/'); 
+        const res = Function('return '+safe)(); 
+        current = String(res); 
+        updateDisplay(current);
+      }catch(e){ 
+        updateDisplay('Error'); 
+        current=''; 
+      } 
+      return; 
+    }
+    if(b.dataset.op){ current += b.dataset.op; updateDisplay(current); return; }
+    current += t;
+    updateDisplay(current);
+  })
+})
+</script>
+</body>
+</html>
